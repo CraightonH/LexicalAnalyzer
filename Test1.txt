@@ -1,7 +1,8 @@
-.
-,
-'a string'
-#A comment
-Schemes
-FactsRules
-::-
+01 .
+02 ,
+03 'a string'
+04 #A comment
+05 Schemes
+06 FactsRules
+07 ::-
+08

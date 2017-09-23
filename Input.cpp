@@ -3,60 +3,73 @@ using namespace std;
 
 
 Input::Input(char* fileName) {
-	currentLineNumber = 0;
-	currentCharLoc = 0;
-	if(!fileLines.empty()) {
-		fileLines.clear();
-	}
 	inputFile.open(fileName);
-	getAllFileLines();
+	inputFile.seekg(0,inputFile.end);
+	fileLength = inputFile.tellg();
+	inputFile.seekg(0,inputFile.beg);
+	newLineCharPositions.clear();
 }
 
 Input::~Input(){}
 
-void Input::getAllFileLines() {
-	string line = "";
-	while(!inputFile.eof()) {
-		getline(inputFile, line);
-		fileLines.push_back(line);
+void Input::getLineNumbers() {
+	char c;
+	int i = 0;
+	while(inputFile.get(c)) {
+		if (c == '\n') {
+			++i;
+			newLineCharPositions.push_back(i);
+		}
 	}
 }
 
-char Input::next() {
-	string line = fileLines.at(currentLineNumber);
+char Input::extract() {
+	char ret = inputFile.get();
+	return inputFile.get();
+}
+
+char Input::extract(char delim) {
 	char ret;
-	if(line.length() <= currentCharLoc) {
-		char ret = line.at(currentCharLoc);
-		currentCharLoc++;
-	} else {
-		currentLineNumber++;
-		currentCharLoc = 0;
-		return next();
-	}
+	do {
+		ret += inputFile.get();
+	} while(ret != delim);
 	return ret;
-/*
-	currentCharLoc++;
-	char c = inputFile.get();
-	if(c == ) {
-		
-	}
-	return c;
-*/
 }
 
 bool Input::isNextChar(char c){
-	string line = fileLines.at(currentLineNumber);
-	if(line.length() <= currentCharLoc + 1) {
-		char g = line.at(currentCharLoc + 1);
-		if(c == g) {
-			return true;
-		}
+	char g = inputFile.peek();
+	if (g == c) {
+		return true;
 	}
 	return false;
 }
 
 bool Input::endOfFile(){
-	if(currentLineNumber == fileLines.size() && currentCharLoc == ) {
-		
+	return inputFile.eof();
+}
+
+int Input::getCurrentLineNumber(){
+	for(int i = 0; i < newLineCharPositions.size(); i++) {
+		if (i = 0) {
+			if (getCurrentCharLoc() < newLineCharPositions.at(i)) {
+				return i;
+			}
+		} else if(i = newLineCharPositions.size()) {
+			if (getCurrentCharLoc() > newLineCharPositions.at(i)) {
+				return i;
+			}
+		} else {
+			if (getCurrentCharLoc() > newLineCharPositions.at(i) && getCurrentCharLoc() < newLineCharPositions.at(i + 1)) {
+				return i + 1;
+			}
+		}
 	}
+}
+
+int Input::getCurrentCharLoc(){
+	return inputFile.tellg();
+}
+
+void Input::moveToLoc(int loc) {
+	inputFile.seekg(loc);
 }

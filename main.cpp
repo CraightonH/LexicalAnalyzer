@@ -10,7 +10,7 @@ void testInputClass() {
 	cin >> fileName;
 	Input* file = new Input(fileName);
 	while(!file->endOfFile()) {
-		cout << file->next();
+		cout << file->extract();
 	}
 	
 }
