@@ -27,9 +27,7 @@ void Input::getLineNumbers() {
 			newLineCharPositions.push_back(charPos);
 		}
 	}
-	inputFile.clear();
-	moveToLoc(inputFile.beg);
-	int tmpFileLength = getFileLength();
+	reset();
 }
 
 char Input::extract() {
@@ -57,6 +55,10 @@ bool Input::endOfFile(){
 	return inputFile.eof();
 }
 
+bool Input::opened(){
+	return inputFile.is_open();
+}
+
 int Input::getCurrentLineNumber(){
 	for(int i = 0; i < newLineCharPositions.size(); i++) {
 		if (i = 0) {
@@ -81,4 +83,9 @@ int Input::getCurrentCharLoc(){
 
 void Input::moveToLoc(int loc) {
 	inputFile.seekg(0, loc);
+}
+
+void Input::reset() {
+	inputFile.clear();
+	moveToLoc(inputFile.beg);
 }

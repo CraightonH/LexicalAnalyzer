@@ -34,6 +34,9 @@ class Token {
 		//---------------------------------------------------------------------------------------
 		// Constructor/Destructor
 		// Handles creation and deletion of the Token class.
-		Token(TokenType pType, char* pValue, unsigned int pLineNumber);
+		Token(TokenType pType, char pValue, unsigned int pLineNumber);
 		virtual ~Token();
+		// print()
+		// provides a string that can be used for printing this token
+		string print();
 };

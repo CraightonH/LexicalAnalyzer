@@ -9,6 +9,7 @@ void testInputClass(char* fileName) {
 	while(!file->endOfFile()) {
 		cout << file->extract();
 	}
+	delete file;
 }
 
 int main() {
@@ -19,5 +20,6 @@ int main() {
 	//testInputClass(fileName);
 	Input* file = new Input(fileName);
 	system("pause");
+	delete file;
 	return 0;
 }

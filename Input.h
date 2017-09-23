@@ -31,6 +31,9 @@ class Input {
 		// endOfFile()
 		// checks to see if at end of file
 		bool endOfFile();
+		// opened()
+		// checks to see if stream opened
+		bool opened();
 		// getCurrentLineNumber()
 		// returns current line number
 		int getCurrentLineNumber();
@@ -40,8 +43,7 @@ class Input {
 		// moveToLoc()
 		// moves to the specified location in the buffer
 		void moveToLoc(int loc);
-		// advance()
-		// increments currentCharLoc
-		//void advance();
-
+		// reset()
+		// resets stream to beginning
+		void reset();
 };
