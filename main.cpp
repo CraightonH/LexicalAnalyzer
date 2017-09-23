@@ -4,19 +4,20 @@
 
 using namespace std;
 
-void testInputClass() {
-	char fileName[9];
-	cout << "Input text file name:";
-	cin >> fileName;
+void testInputClass(char* fileName) {
 	Input* file = new Input(fileName);
 	while(!file->endOfFile()) {
 		cout << file->extract();
 	}
-	
 }
 
 int main() {
-	testInputClass();
+	char fileName[256];
+	cout << "Input text file name:";
+	cin.getline(fileName,256);
+	//cout << "fileName:" << fileName << "\n";
+	//testInputClass(fileName);
+	Input* file = new Input(fileName);
 	system("pause");
 	return 0;
 }
