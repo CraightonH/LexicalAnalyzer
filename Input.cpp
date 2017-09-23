@@ -35,11 +35,13 @@ char Input::extract() {
 	return ret;
 }
 
-char Input::extract(char delim) {
-	char ret;
+string Input::extract(char delim) {
+	string ret;
+	char c;
 	do {
-		ret += inputFile.get();
-	} while(ret != delim);
+		c = inputFile.get();
+		ret += c;
+	} while(c != delim);
 	return ret;
 }
 
@@ -60,19 +62,16 @@ bool Input::opened(){
 }
 
 int Input::getCurrentLineNumber(){
+	int currentCharLoc = getCurrentCharLoc();
 	for(int i = 0; i < newLineCharPositions.size(); i++) {
-		if (i = 0) {
-			if (getCurrentCharLoc() < newLineCharPositions.at(i)) {
-				return i;
-			}
-		} else if(i = newLineCharPositions.size()) {
-			if (getCurrentCharLoc() > newLineCharPositions.at(i)) {
-				return i;
-			}
-		} else {
-			if (getCurrentCharLoc() > newLineCharPositions.at(i) && getCurrentCharLoc() < newLineCharPositions.at(i + 1)) {
-				return i + 1;
-			}
+		if (currentCharLoc > newLineCharPositions.at(newLineCharPositions.size() - 1)) {
+			return newLineCharPositions.size();
+		} else if (currentCharLoc < newLineCharPositions.at(0)) {
+			return i + 1;
+		} else if (currentCharLoc == newLineCharPositions.at(i)) {
+			return i + 1;
+		} else if (currentCharLoc > newLineCharPositions.at(i) && currentCharLoc < newLineCharPositions.at(i + 1)) {
+			return i + 1;
 		}
 	}
 }

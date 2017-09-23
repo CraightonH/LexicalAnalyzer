@@ -24,7 +24,7 @@ class Input {
 		char extract();
 		// extract(char delim)
 		// Get next char, stopping at the next delim char
-		char extract(char delim);
+		string extract(char delim);
 		// isNextChar(char c)
 		// check to see if next char in stream matches param
 		bool isNextChar(char c);

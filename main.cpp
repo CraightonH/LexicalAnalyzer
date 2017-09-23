@@ -1,5 +1,5 @@
 #include <iostream>
-#include "Input.h"
+#include "Lexer.h"
 #include <string>
 
 using namespace std;
@@ -12,14 +12,22 @@ void testInputClass(char* fileName) {
 	delete file;
 }
 
+void testLexer(char* fileName) {
+	Lexer* lexer = new Lexer(fileName);
+	cout << "INPUT:\n";
+	lexer->printInput();
+	cout << "\nTOKENS\n";
+	lexer->printTokens();
+	delete lexer;
+}
+
 int main() {
 	char fileName[256];
 	cout << "Input text file name:";
 	cin.getline(fileName,256);
-	//cout << "fileName:" << fileName << "\n";
 	//testInputClass(fileName);
-	Input* file = new Input(fileName);
+	testLexer(fileName);
+	cout << "\n";
 	system("pause");
-	delete file;
 	return 0;
 }
