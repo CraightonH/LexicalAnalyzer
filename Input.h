@@ -12,6 +12,7 @@ class Input {
 		vector<int> newLineCharPositions;
 
 		void getLineNumbers();
+		int getFileLength();
 	public:
 		//---------------------------------------------------------------------------------------
 		// Constructor/Destructor

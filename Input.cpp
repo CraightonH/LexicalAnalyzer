@@ -4,28 +4,37 @@ using namespace std;
 
 Input::Input(char* fileName) {
 	inputFile.open(fileName);
-	inputFile.seekg(0,inputFile.end);
-	fileLength = inputFile.tellg();
-	inputFile.seekg(0,inputFile.beg);
 	newLineCharPositions.clear();
+	fileLength = getFileLength();
+	getLineNumbers();
 }
 
 Input::~Input(){}
 
+int Input::getFileLength() {
+	moveToLoc(inputFile.end);
+	int ret = inputFile.tellg();
+	moveToLoc(inputFile.beg);
+	return ret;
+}
+
 void Input::getLineNumbers() {
 	char c;
-	int i = 0;
+	int charPos = 0;
 	while(inputFile.get(c)) {
+		charPos++;
 		if (c == '\n') {
-			++i;
-			newLineCharPositions.push_back(i);
+			newLineCharPositions.push_back(charPos);
 		}
 	}
+	inputFile.clear();
+	moveToLoc(inputFile.beg);
+	int tmpFileLength = getFileLength();
 }
 
 char Input::extract() {
 	char ret = inputFile.get();
-	return inputFile.get();
+	return ret;
 }
 
 char Input::extract(char delim) {
@@ -71,5 +80,5 @@ int Input::getCurrentCharLoc(){
 }
 
 void Input::moveToLoc(int loc) {
-	inputFile.seekg(loc);
+	inputFile.seekg(0, loc);
 }
