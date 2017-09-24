@@ -40,9 +40,27 @@ string Input::extract(char delim) {
 	char c;
 	do {
 		c = inputFile.get();
-		ret += c;
+		if (c != '\n') {
+			ret += c;
+		}
 	} while(c != delim);
+	ret = extract(delim, ret);
 	return ret;
+}
+
+// private function reserved for possible recursion cases
+string Input::extract(char delim, string str) {
+	if (delim == '\'') {
+		if (isNextChar('\'')) {
+			char c;
+			do {
+				c = inputFile.get();
+				str += c;
+			} while(c != delim);
+			str = extract(delim, str);
+		}
+	}
+	return str;
 }
 
 bool Input::isNextChar(char c){
@@ -76,6 +94,10 @@ int Input::getCurrentLineNumber(){
 	}
 }
 
+int Input::getMaxReadableLines() {
+	return newLineCharPositions.size();
+}
+
 int Input::getCurrentCharLoc(){
 	return inputFile.tellg();
 }
@@ -87,4 +109,8 @@ void Input::moveToLoc(int loc) {
 void Input::reset() {
 	inputFile.clear();
 	moveToLoc(inputFile.beg);
+}
+
+void Input::returnChar(char c) {
+	inputFile.putback(c);
 }

@@ -13,6 +13,7 @@ class Input {
 
 		void getLineNumbers();
 		int getFileLength();
+		string extract(char delim, string str);
 	public:
 		//---------------------------------------------------------------------------------------
 		// Constructor/Destructor
@@ -43,7 +44,13 @@ class Input {
 		// moveToLoc()
 		// moves to the specified location in the buffer
 		void moveToLoc(int loc);
+		// getMaxReadableLines()
+		// returns the max number of readable lines (does not include EOF line)
+		int getMaxReadableLines();
 		// reset()
 		// resets stream to beginning
 		void reset();
+		// returnChar()
+		// returns char to stream
+		void returnChar(char c);
 };

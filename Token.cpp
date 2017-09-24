@@ -17,6 +17,13 @@ Token::Token(TokenType pType, string pValue, unsigned int pLineNumber) {
 
 Token::~Token(){}
 
+Token* Token::updateValues(TokenType pType, string pValue, unsigned int pLineNumber) {
+	type = pType;
+	value = pValue;
+	lineNumber = pLineNumber;
+	return this;
+}
+
 string Token::print() {
 	string strType = "";
 	switch(type) {

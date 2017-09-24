@@ -42,4 +42,7 @@ class Token {
 		// print()
 		// provides a string that can be used for printing this token
 		string print();
+		// updateValues()
+		// will update a token's values
+		Token* updateValues(TokenType pType, string pValue, unsigned int pLineNumber);
 };
