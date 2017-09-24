@@ -3,60 +3,116 @@ using namespace std;
 
 
 Input::Input(char* fileName) {
-	currentLineNumber = 0;
-	currentCharLoc = 0;
-	if(!fileLines.empty()) {
-		fileLines.clear();
-	}
 	inputFile.open(fileName);
-	getAllFileLines();
+	newLineCharPositions.clear();
+	fileLength = getFileLength();
+	getLineNumbers();
 }
 
 Input::~Input(){}
 
-void Input::getAllFileLines() {
-	string line = "";
-	while(!inputFile.eof()) {
-		getline(inputFile, line);
-		fileLines.push_back(line);
-	}
+int Input::getFileLength() {
+	moveToLoc(inputFile.end);
+	int ret = inputFile.tellg();
+	moveToLoc(inputFile.beg);
+	return ret;
 }
 
-char Input::next() {
-	string line = fileLines.at(currentLineNumber);
-	char ret;
-	if(line.length() <= currentCharLoc) {
-		char ret = line.at(currentCharLoc);
-		currentCharLoc++;
-	} else {
-		currentLineNumber++;
-		currentCharLoc = 0;
-		return next();
+void Input::getLineNumbers() {
+	char c;
+	int charPos = -1;
+	while(inputFile.get(c)) {
+		charPos++;
+		if (c == '\n') {
+			newLineCharPositions.push_back(charPos);
+		}
 	}
+	reset();
+}
+
+char Input::extract() {
+	char ret = inputFile.get();
 	return ret;
-/*
-	currentCharLoc++;
-	char c = inputFile.get();
-	if(c == ) {
-		
+}
+
+string Input::extract(char delim) {
+	string ret;
+	char c;
+	do {
+		c = inputFile.get();
+		if (c != '\n') {
+			ret += c;
+		}
+	} while(c != delim);
+	ret = extract(delim, ret);
+	return ret;
+}
+
+// private function reserved for possible recursion cases
+string Input::extract(char delim, string str) {
+	if (delim == '\'') {
+		if (isNextChar('\'')) {
+			char c;
+			do {
+				c = inputFile.get();
+				str += c;
+			} while(c != delim);
+			str = extract(delim, str);
+		}
 	}
-	return c;
-*/
+	return str;
 }
 
 bool Input::isNextChar(char c){
-	string line = fileLines.at(currentLineNumber);
-	if(line.length() <= currentCharLoc + 1) {
-		char g = line.at(currentCharLoc + 1);
-		if(c == g) {
-			return true;
-		}
+	char g = inputFile.peek();
+	if (g == c) {
+		return true;
 	}
 	return false;
 }
 
 bool Input::endOfFile(){
-	if(currentLineNumber == fileLines.size() && currentCharLoc == ) {
-		
+	return inputFile.eof();
+}
+
+bool Input::opened(){
+	return inputFile.is_open();
+}
+
+int Input::getCurrentLineNumber() {
+	int currentCharLoc = getCurrentCharLoc();
+	for(int i = 0; i < newLineCharPositions.size(); i++) {
+		if (currentCharLoc == -1) {
+			return getMaxReadableLines() + 1;
+		} else if (currentCharLoc > newLineCharPositions.at(newLineCharPositions.size() - 1)) {
+			return getMaxReadableLines();
+		} else if (currentCharLoc < newLineCharPositions.at(0)) {
+			return i + 1;
+		} else if (currentCharLoc == newLineCharPositions.at(i)) {
+			return i + 1;
+		} else if (currentCharLoc > newLineCharPositions.at(i) && currentCharLoc < newLineCharPositions.at(i + 1)) {
+			return i + 1;
+		}
 	}
+}
+
+int Input::getMaxReadableLines() {
+	return newLineCharPositions.size();
+}
+
+int Input::getCurrentCharLoc(){
+	return inputFile.tellg();
+}
+
+void Input::moveToLoc(int loc) {
+	inputFile.seekg(0, loc);
+}
+
+void Input::reset() {
+	inputFile.clear();
+	moveToLoc(inputFile.beg);
+}
+
+void Input::returnChar(char c) {
+	inputFile.putback(c);
 }

@@ -1,22 +1,33 @@
 #include <iostream>
-#include "Input.h"
+#include "Lexer.h"
 #include <string>
 
 using namespace std;
 
-void testInputClass() {
-	char fileName[9];
-	cout << "Input text file name:";
-	cin >> fileName;
+void testInputClass(char* fileName) {
 	Input* file = new Input(fileName);
 	while(!file->endOfFile()) {
-		cout << file->next();
+		cout << file->extract();
 	}
-	
+	delete file;
+}
+
+void testLexer(char* fileName) {
+	Lexer* lexer = new Lexer(fileName);
+	cout << "INPUT:\n";
+	lexer->printInput();
+	cout << "\nTOKENS\n";
+	lexer->printTokens();
+	delete lexer;
 }
 
 int main() {
-	testInputClass();
+	char fileName[256];
+	cout << "Input text file name:";
+	cin.getline(fileName,256);
+	//testInputClass(fileName);
+	testLexer(fileName);
+	cout << "\n";
 	system("pause");
 	return 0;
 }
