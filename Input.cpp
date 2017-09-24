@@ -20,7 +20,7 @@ int Input::getFileLength() {
 
 void Input::getLineNumbers() {
 	char c;
-	int charPos = 0;
+	int charPos = -1;
 	while(inputFile.get(c)) {
 		charPos++;
 		if (c == '\n') {
@@ -79,11 +79,13 @@ bool Input::opened(){
 	return inputFile.is_open();
 }
 
-int Input::getCurrentLineNumber(){
+int Input::getCurrentLineNumber() {
 	int currentCharLoc = getCurrentCharLoc();
 	for(int i = 0; i < newLineCharPositions.size(); i++) {
-		if (currentCharLoc > newLineCharPositions.at(newLineCharPositions.size() - 1)) {
-			return newLineCharPositions.size();
+		if (currentCharLoc == -1) {
+			return getMaxReadableLines() + 1;
+		} else if (currentCharLoc > newLineCharPositions.at(newLineCharPositions.size() - 1)) {
+			return getMaxReadableLines();
 		} else if (currentCharLoc < newLineCharPositions.at(0)) {
 			return i + 1;
 		} else if (currentCharLoc == newLineCharPositions.at(i)) {
