@@ -22,7 +22,7 @@ void testLexer(char* fileName) {
 }
 */
 
-int main(int argc, char* argv) {
+int main(int argc, char* argv[]) {
 	/*
 	char fileName[256];
 	cout << "Input text file name:";
@@ -32,7 +32,7 @@ int main(int argc, char* argv) {
 	cout << "\n";
 	system("pause");
 	*/
-	Lexer lex = Lexer(argv);
+	Lexer lex = Lexer(argv[1]);
 	lex.printTokens();
 	return 0;
 }
