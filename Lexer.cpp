@@ -8,6 +8,9 @@ Lexer::Lexer(char* fileName) {
 
 Lexer::~Lexer(){
 	delete inputFile;
+	for(int i = 0; i < tokens.size(); i++) {
+		delete tokens.at(i);
+	}
 }
 
 void Lexer::tokenizeFile() {

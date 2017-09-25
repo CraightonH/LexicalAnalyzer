@@ -14,8 +14,8 @@ void testInputClass(char* fileName) {
 
 void testLexer(char* fileName) {
 	Lexer* lexer = new Lexer(fileName);
-	cout << "INPUT:\n";
-	lexer->printInput();
+	//cout << "INPUT:\n";
+	//lexer->printInput();
 	cout << "\nTOKENS\n";
 	lexer->printTokens();
 	delete lexer;
