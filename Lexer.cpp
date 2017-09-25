@@ -19,11 +19,8 @@ void Lexer::tokenizeFile() {
 	}
 	char c;
 	//Token* tok = new Token();
-	string s;
-	char innerExtractionChar;
 	int curLine = 1;
 	do {
-		s = "";
 		c = inputFile->extract();
 		switch(c) {
 			case ',':				
@@ -42,13 +39,7 @@ void Lexer::tokenizeFile() {
 				tokens.push_back(new Token(RIGHT_PAREN, c, curLine));
 				break;
 			case ':':
-				if (inputFile->isNextChar('-')) {
-					s = c;
-					s += inputFile->extract('-');
-					tokens.push_back(new Token(COLON_DASH, s, curLine));
-				} else {
-					tokens.push_back(new Token(COLON, c, curLine));
-				}
+				colonOrColonDashMachine(c, curLine);
 				break;
 			case ':-':
 				tokens.push_back(new Token(COLON_DASH, c, curLine));
@@ -66,21 +57,7 @@ void Lexer::tokenizeFile() {
 				stringMachine(c, curLine);
 				break;
 			default:
-				//TODO: IMPLEMENT ID AND KEYWORDS LOGIC HERE
-				// ASSUME ID
-				if (isAlphabet(c)) {
-					s = getKeywordOrID(c);
-					tokens.push_back(getKeywordOrIDToken(s, curLine));
-				} else if (c == '\n') {
-					curLine++;
-				} else if (isspace(c)) {
-					// AS PER INSTRUCTIONS, DO NOT SAVE WHITESPACE
-				} else if (c == EOF || inputFile->endOfFile()) {
-					tokens.push_back(new Token(MYEOF, "", inputFile->getMaxReadableLines() + 1));
-				} else {
-					// ALL ELSE IS UNDEFINED
-					tokens.push_back(new Token(UNDEFINED, c, curLine));
-				}
+				determineDefault(c, curLine);
 				break;
 		}
 	} while(!inputFile->endOfFile());
@@ -99,6 +76,36 @@ void Lexer::printInput() {
 		cout << inputFile->extract();
 	}
 	inputFile->reset();
+}
+
+void Lexer::colonOrColonDashMachine(char c, int& curLine) {
+	if (inputFile->isNextChar('-')) {
+		string s = "";
+		s = c;
+		s += inputFile->extract('-');
+		tokens.push_back(new Token(COLON_DASH, s, curLine));
+	} else {
+		tokens.push_back(new Token(COLON, c, curLine));
+	}
+}
+
+void Lexer::determineDefault(char c, int& curLine) {
+	//TODO: IMPLEMENT ID AND KEYWORDS LOGIC HERE
+	// ASSUME ID
+	if (isAlphabet(c)) {
+		string s = "";
+		s = getKeywordOrID(c);
+		tokens.push_back(getKeywordOrIDToken(s, curLine));
+	} else if (c == '\n') {
+		curLine++;
+	} else if (isspace(c)) {
+		// AS PER INSTRUCTIONS, DO NOT SAVE WHITESPACE
+	} else if (c == EOF || inputFile->endOfFile()) {
+		tokens.push_back(new Token(MYEOF, "", inputFile->getMaxReadableLines() + 1));
+	} else {
+		// ALL ELSE IS UNDEFINED
+		tokens.push_back(new Token(UNDEFINED, c, curLine));
+	}
 }
 
 bool Lexer::isAlphabet(char c) {

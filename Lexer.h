@@ -25,6 +25,12 @@ class Lexer {
 		// stringMachine()
 		// will handle getting strings
 		void stringMachine(char c, int& curLine);
+		// colonOrColonDashMachine()
+		// will handle getting strings
+		void colonOrColonDashMachine(char c, int& curLine);
+		// determineDefault()
+		// will handle getting strings
+		void determineDefault(char c, int& curLine);
 		// recurseString()
 		// will handle getting strings
 		string recurseString(char c, string s, int& curLine, bool& endFileFound);

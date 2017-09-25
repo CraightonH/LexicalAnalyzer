@@ -1,4 +1,4 @@
-﻿Build started 9/25/2017 4:08:12 PM.
+﻿Build started 9/25/2017 4:32:34 PM.
      1>Project "C:\Users\Craighton.HANCOCK\Documents\BYU\Fall2018\CS236\Labs\LexicalAnalyzer\LexicalAnalyzer\LexicalAnalyzer.vcxproj" on node 2 (build target(s)).
      1>InitializeBuildStatus:
          Creating "Debug\LexicalAnalyzer.unsuccessfulbuild" because "AlwaysCreate" was specified.
@@ -26,4 +26,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:00.89
+Time Elapsed 00:00:00.91
