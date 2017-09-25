@@ -104,7 +104,7 @@ int Input::getCurrentCharLoc(){
 	return inputFile.tellg();
 }
 
-void Input::moveToLoc(int loc) {
+void Input::moveToLoc(ios_base::seekdir loc) {
 	inputFile.seekg(0, loc);
 }
 
