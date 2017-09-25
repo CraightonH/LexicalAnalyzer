@@ -36,6 +36,10 @@ class Lexer {
 		// Constructor/Destructor
 		// Handles creation and deletion of the Token class.
 		Lexer(char* fileName);
+		//---------------------------------------------------------------------------------------
+		// Constructor/Destructor
+		// Handles creation and deletion of the Token class.
+		//Lexer(char* fileName[]);
 		virtual ~Lexer();
 		// tokenizeFile()
 		// interacts with the Input class to read through and create tokens
