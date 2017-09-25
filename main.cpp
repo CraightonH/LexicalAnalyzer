@@ -11,7 +11,6 @@ void testInputClass(char* fileName) {
 	}
 	delete file;
 }
-*/
 
 void testLexer(char* fileName) {
 	Lexer* lexer = new Lexer(fileName);
@@ -21,9 +20,10 @@ void testLexer(char* fileName) {
 	lexer->printTokens();
 	delete lexer;
 }
+*/
 
-int main(int argc, char* argv[]) {
-	
+int main(int argc, char* argv) {
+	/*
 	char fileName[256];
 	cout << "Input text file name:";
 	cin.getline(fileName,256);
@@ -31,7 +31,8 @@ int main(int argc, char* argv[]) {
 	testLexer(fileName);
 	cout << "\n";
 	system("pause");
-	
-	//Lexer lex = Lexer(argv);
+	*/
+	Lexer lex = Lexer(argv);
+	lex.printTokens();
 	return 0;
 }
