@@ -21,7 +21,7 @@ void testLexer(char* fileName) {
 	delete lexer;
 }
 
-int main() {
+int main(int argc, char* argv[]) {
 	char fileName[256];
 	cout << "Input text file name:";
 	cin.getline(fileName,256);
