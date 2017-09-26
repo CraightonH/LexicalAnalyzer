@@ -68,7 +68,7 @@ void Lexer::printTokens() {
 	for(int i = 0; i < tokens.size(); i++) {
 		cout << tokens.at(i)->print() << "\n";
 	}
-	cout << "Total tokens = " << tokens.size();
+	cout << "Total Tokens = " << tokens.size();
 }
 
 void Lexer::printInput() {
@@ -115,12 +115,37 @@ bool Lexer::isAlphabet(char c) {
 	return false;
 }
 
+bool Lexer::isNumber(char c) {
+	if (c >= '0' && c <= '9') {
+		return true;
+	}
+	return false;
+}
+
 void Lexer::stringMachine(char c, int& curLine) {
 	string s = "";
+	s += c;
 	int incrementCurLine = 0;
 	bool endFileFound = false;
-	s = recurseString(c, s, incrementCurLine, endFileFound);
-	//inputFile->returnChar(c);
+	do {
+		c = inputFile->extract();
+		if (c == EOF) {
+			endFileFound = true;
+			break;
+		}
+		if (c == '\n') {
+			incrementCurLine++;
+		}
+		s += c;
+		if (c == '\'') {
+			if (inputFile->isNextChar('\'')) {
+				c = inputFile->extract();
+				s += c;
+				c = inputFile->extract();
+				s += c;
+			}
+		}
+	} while(c != '\'');
 	if (endFileFound) {
 		tokens.push_back(new Token(UNDEFINED, s, curLine));
 		curLine += incrementCurLine;
@@ -128,34 +153,16 @@ void Lexer::stringMachine(char c, int& curLine) {
 	} else {
 		tokens.push_back(new Token(STRING, s, curLine));
 		curLine += incrementCurLine;
-	}
-}
-
-string Lexer::recurseString(char c, string s, int& incrementCurLine, bool& endFileFound) {
-	//if (inputFile->isNextChar('\'')) {
-		do {
-			if (c == EOF) {
-				endFileFound = true;
-				return s;
-			}
-			if (c == '\n') {
-				incrementCurLine++;
-			}
-			s += c;
-			c = inputFile->extract();
-		} while(c != '\'');
-		s += c;
-		if (c == '\'' && inputFile->isNextChar('\'')) {
-			c = inputFile->extract();
-			s = recurseString(c,s,incrementCurLine,endFileFound);
+		if (inputFile->endOfFile()) {
+			tokens.push_back(new Token(MYEOF, "", curLine));
 		}
-	//}
-	return s;
+	}
 }
 
 void Lexer::commentMachine(char c, int& curLine) {
 	string s = "";
 	int incrementCurLine = 0;
+	bool createEOFToken = false;
 	if (inputFile->isNextChar('|')) {
 		s += c;
 		c = inputFile->extract();
@@ -176,20 +183,29 @@ void Lexer::commentMachine(char c, int& curLine) {
 				s += c;
 			}
 			c = inputFile->extract();
+			if (c == EOF) {
+				break;
+			}
 		}
 		inputFile->returnChar(c);
 	}
 	tokens.push_back(new Token(COMMENT, s, curLine));
 	curLine += incrementCurLine;
+	if (inputFile->endOfFile()) {
+		tokens.push_back(new Token(MYEOF, "", curLine));
+	}
 }
 
 string Lexer::getKeywordOrID(char c) {
 	string str = "";
-	while(isAlphabet(c)) {
+	while(isAlphabet(c) || isNumber(c)) {
 		if (c != '\n') {
 			str += c;
 		}
 		c = inputFile->extract();
+		if (c == EOF) {
+			break;
+		}
 	}
 	inputFile->returnChar(c);
 	return str;

@@ -16,6 +16,9 @@ class Lexer {
 		// isAlphabet()
 		// determines if the input is a letter of the alphabet
 		bool isAlphabet(char c);
+		// isNumber()
+		// determines if the input is a letter of the alphabet
+		bool isNumber(char c);
 		// getKeywordOrID()
 		// finds keyword or ID in the next sequence of characters
 		string getKeywordOrID(char c);
@@ -31,9 +34,6 @@ class Lexer {
 		// determineDefault()
 		// will handle getting strings
 		void determineDefault(char c, int& curLine);
-		// recurseString()
-		// will handle getting strings
-		string recurseString(char c, string s, int& curLine, bool& endFileFound);
 		// getKeywordOrIDToken()
 		// determines if the input is a keyword and returns token of that keyword
 		Token* getKeywordOrIDToken(string val, int& curLine);
