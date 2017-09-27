@@ -176,22 +176,44 @@ void Lexer::stringMachine(char c, int& curLine) {
 }
 
 void Lexer::commentMachine(char c, int& curLine) {
+	//cout << "commentMachine()";
 	string s = "";
 	int incrementCurLine = 0;
-	bool createEOFToken = false;
 	if (inputFile->isNextChar('|')) {
+		//cout << "multiline comment found";
+		bool undef = false;
 		s += c;
 		c = inputFile->extract();
-		while(c != '#') {
+		while(true) {
 			if (c == '\n') {
 				incrementCurLine++;
 			}
+			/*
 			if (c == EOF) {
+				break;
+			}
+			*/
+			if (c == '|' && inputFile->isNextChar('#')) {
+				// IF CURRENT CHAR IS | AND NEXT CHAR IS #, SAVE BOTH AND BREAK
+				s += c;
+				c = inputFile->extract();
+				s += c;
+				break;
+			} else if (c == EOF) {
+				// DID NOT TERMINATE WITH STRING "|#" THEREFORE UNDEFINED
+				undef = true;
 				break;
 			}
 			s += c;
 			c = inputFile->extract();
 		}
+		if (undef) {
+			tokens.push_back(new Token(UNDEFINED, s, curLine));
+		} else {
+			tokens.push_back(new Token(COMMENT, s, curLine));
+		}
+		curLine += incrementCurLine;
+		/*
 		if (c == '#') {
 			s += c;
 			c = inputFile->extract();
@@ -200,22 +222,30 @@ void Lexer::commentMachine(char c, int& curLine) {
 		} else if (c == EOF) {
 			tokens.push_back(new Token(UNDEFINED, s, curLine));
 		}
+*/
+		//cout << "done with multiline";
 	} else {
+		//cout << "single line comment found";
 		while(c != '\n') {
+			//cout << "char " << c;
 			if (c != '\r') {
 				s += c;
 			}
 			c = inputFile->extract();
 			if (c == EOF) {
+				//cout << "single line EOF found";
 				break;
 			}
 		}
+		//cout << "done with single comment, creating token";
 		tokens.push_back(new Token(COMMENT, s, curLine));
+		// PUT BACK \n CHAR
+		inputFile->returnChar(c);
 	}
 	if (inputFile->endOfFile()) {
+		//cout << "end of file found, creating token";
 		tokens.push_back(new Token(MYEOF, "", inputFile->getMaxReadableLines() + 1));
 	}
-	//inputFile->returnChar(c);
 }
 
 string Lexer::getKeywordOrID(char c) {

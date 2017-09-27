@@ -11,8 +11,8 @@ void testInputClass(char* fileName) {
 	}
 	delete file;
 }
-*/
 
+*/
 void testLexer(char* fileName) {
 	Lexer* lexer = new Lexer(fileName);
 	//cout << "INPUT:\n";
