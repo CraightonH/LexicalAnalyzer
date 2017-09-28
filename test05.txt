@@ -1,0 +1,7 @@
+FactFacts
+'String''s'
+'' EmptyString
+'string is tall
+hahah
+what line'
+'string is unterminated

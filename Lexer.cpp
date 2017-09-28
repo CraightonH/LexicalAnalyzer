@@ -240,7 +240,9 @@ void Lexer::commentMachine(char c, int& curLine) {
 		//cout << "done with single comment, creating token";
 		tokens.push_back(new Token(COMMENT, s, curLine));
 		// PUT BACK \n CHAR
-		inputFile->returnChar(c);
+		if (c != EOF) {
+			inputFile->returnChar(c);
+		}
 	}
 	if (inputFile->endOfFile()) {
 		//cout << "end of file found, creating token";
