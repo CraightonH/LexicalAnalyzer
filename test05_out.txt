@@ -1,0 +1,11 @@
+(ID,"FactFacts",1)
+(STRING,"'String''s'",2)
+(STRING,"''",3)
+(ID,"EmptyString",3)
+(STRING,"'string is tall
+hahah
+what line'",4)
+(UNDEFINED,"'string is unterminated
+",7)
+(EOF,"",8)
+Total Tokens = 7

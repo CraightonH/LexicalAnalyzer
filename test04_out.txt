@@ -1,0 +1,13 @@
+(COMMENT,"#|I AM A COMMENT BLOCK|#",1)
+(COMMENT,"#|I am a multi-line comment block withs
+stuff inside|#",2)
+(COMMENT,"# I am a line comment",4)
+(ID,"on",5)
+(ID,"more",5)
+(ID,"than",5)
+(ID,"one",5)
+(ID,"line",5)
+(UNDEFINED,"#|I will terminate prematurely
+",6)
+(EOF,"",7)
+Total Tokens = 10

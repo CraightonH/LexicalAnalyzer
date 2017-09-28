@@ -43,7 +43,7 @@ class Input {
 		int getCurrentCharLoc();
 		// moveToLoc()
 		// moves to the specified location in the buffer
-		void moveToLoc(int loc);
+		void moveToLoc(ios_base::seekdir loc);
 		// getMaxReadableLines()
 		// returns the max number of readable lines (does not include EOF line)
 		int getMaxReadableLines();

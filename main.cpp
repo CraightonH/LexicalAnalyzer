@@ -3,7 +3,7 @@
 #include <string>
 
 using namespace std;
-
+/*
 void testInputClass(char* fileName) {
 	Input* file = new Input(fileName);
 	while(!file->endOfFile()) {
@@ -14,20 +14,27 @@ void testInputClass(char* fileName) {
 
 void testLexer(char* fileName) {
 	Lexer* lexer = new Lexer(fileName);
-	cout << "INPUT:\n";
-	lexer->printInput();
+	//cout << "INPUT:\n";
+	//lexer->printInput();
 	cout << "\nTOKENS\n";
 	lexer->printTokens();
 	delete lexer;
 }
+*/
 
-int main() {
-	char fileName[256];
-	cout << "Input text file name:";
-	cin.getline(fileName,256);
-	//testInputClass(fileName);
-	testLexer(fileName);
-	cout << "\n";
+int main(int argc, char* argv[]) {
+	/*
+	while(true) {
+		char fileName[256];
+		cout << "Input text file name:";
+		cin.getline(fileName,256);
+		//testInputClass(fileName);
+		testLexer(fileName);
+		cout << "\n";
+	}
 	system("pause");
+	*/
+	Lexer lex = Lexer(argv[1]);
+	lex.printTokens();
 	return 0;
 }

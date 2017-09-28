@@ -8,6 +8,9 @@ Lexer::Lexer(char* fileName) {
 
 Lexer::~Lexer(){
 	delete inputFile;
+	for(int i = 0; i < tokens.size(); i++) {
+		delete tokens.at(i);
+	}
 }
 
 void Lexer::tokenizeFile() {
@@ -16,11 +19,8 @@ void Lexer::tokenizeFile() {
 	}
 	char c;
 	//Token* tok = new Token();
-	string s;
-	char innerExtractionChar;
 	int curLine = 1;
 	do {
-		s = "";
 		c = inputFile->extract();
 		switch(c) {
 			case ',':				
@@ -39,13 +39,7 @@ void Lexer::tokenizeFile() {
 				tokens.push_back(new Token(RIGHT_PAREN, c, curLine));
 				break;
 			case ':':
-				if (inputFile->isNextChar('-')) {
-					s = c;
-					s += inputFile->extract('-');
-					tokens.push_back(new Token(COLON_DASH, s, curLine));
-				} else {
-					tokens.push_back(new Token(COLON, c, curLine));
-				}
+				colonOrColonDashMachine(c, curLine);
 				break;
 			case ':-':
 				tokens.push_back(new Token(COLON_DASH, c, curLine));
@@ -63,21 +57,7 @@ void Lexer::tokenizeFile() {
 				stringMachine(c, curLine);
 				break;
 			default:
-				//TODO: IMPLEMENT ID AND KEYWORDS LOGIC HERE
-				// ASSUME ID
-				if (isAlphabet(c)) {
-					s = getKeywordOrID(c);
-					tokens.push_back(getKeywordOrIDToken(s, curLine));
-				} else if (c == '\n') {
-					curLine++;
-				} else if (isspace(c)) {
-					// AS PER INSTRUCTIONS, DO NOT SAVE WHITESPACE
-				} else if (c == EOF || inputFile->endOfFile()) {
-					tokens.push_back(new Token(MYEOF, "", inputFile->getMaxReadableLines() + 1));
-				} else {
-					// ALL ELSE IS UNDEFINED
-					tokens.push_back(new Token(UNDEFINED, c, curLine));
-				}
+				determineDefault(c, curLine);
 				break;
 		}
 	} while(!inputFile->endOfFile());
@@ -88,7 +68,7 @@ void Lexer::printTokens() {
 	for(int i = 0; i < tokens.size(); i++) {
 		cout << tokens.at(i)->print() << "\n";
 	}
-	cout << "Total tokens = " << tokens.size();
+	cout << "Total Tokens = " << tokens.size();
 }
 
 void Lexer::printInput() {
@@ -98,6 +78,39 @@ void Lexer::printInput() {
 	inputFile->reset();
 }
 
+void Lexer::colonOrColonDashMachine(char c, int& curLine) {
+	if (inputFile->isNextChar('-')) {
+		string s = "";
+		s = c;
+		s += inputFile->extract();
+		tokens.push_back(new Token(COLON_DASH, s, curLine));
+	} else {
+		tokens.push_back(new Token(COLON, c, curLine));
+	}
+}
+
+void Lexer::determineDefault(char c, int& curLine) {
+	//TODO: IMPLEMENT ID AND KEYWORDS LOGIC HERE
+	// ASSUME ID
+	if (isAlphabet(c)) {
+		string s = "";
+		s = getKeywordOrID(c);
+		tokens.push_back(getKeywordOrIDToken(s, curLine));
+	} else if (c == '\n') {
+		curLine++;
+	} else if (isspace(c)) {
+		// AS PER INSTRUCTIONS, DO NOT SAVE WHITESPACE
+	} else {
+		// ALL ELSE IS UNDEFINED
+		if (c != EOF) {
+			tokens.push_back(new Token(UNDEFINED, c, curLine));
+		}
+	}
+	if (c == EOF || inputFile->endOfFile()) {
+		tokens.push_back(new Token(MYEOF, "", inputFile->getMaxReadableLines() + 1));
+	}
+}
+
 bool Lexer::isAlphabet(char c) {
 	if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z')) {
 		return true;
@@ -105,81 +118,148 @@ bool Lexer::isAlphabet(char c) {
 	return false;
 }
 
+bool Lexer::isNumber(char c) {
+	if (c >= '0' && c <= '9') {
+		return true;
+	}
+	return false;
+}
+
 void Lexer::stringMachine(char c, int& curLine) {
 	string s = "";
+	s += c;
 	int incrementCurLine = 0;
 	bool endFileFound = false;
-	s = recurseString(c, s, incrementCurLine, endFileFound);
-	//inputFile->returnChar(c);
+	do {
+		c = inputFile->extract();
+		if (c == EOF) {
+			endFileFound = true;
+			break;
+		}
+		if (c == '\n') {
+			incrementCurLine++;
+		}
+		s += c;
+		if (c == '\'' && inputFile->isNextChar('\'')) {
+			// DOUBLE QUOTE CASE = ACT AS THOUGH BOTH QUOTES WERE NOT SEEN
+			c = inputFile->extract();
+			s += c;
+		} else if (c == '\'' && !inputFile->isNextChar('\'')) {
+			// TERMINATION CASE = QUOTE NOT FOLLOWED BY QUOTE
+			break;
+			/*
+			if (inputFile->isNextChar('\'')) {
+				c = inputFile->extract();
+				s += c;
+				c = inputFile->extract();
+				if (c == EOF) {
+					endFileFound = true;
+					break;
+				} else {
+					s += c;
+				}
+			}
+			*/
+		}
+	} while(true);
 	if (endFileFound) {
 		tokens.push_back(new Token(UNDEFINED, s, curLine));
 		curLine += incrementCurLine;
-		tokens.push_back(new Token(MYEOF, "", curLine));
+		tokens.push_back(new Token(MYEOF, "", inputFile->getMaxReadableLines() + 1));
 	} else {
 		tokens.push_back(new Token(STRING, s, curLine));
 		curLine += incrementCurLine;
+		if (inputFile->endOfFile()) {
+			tokens.push_back(new Token(MYEOF, "", inputFile->getMaxReadableLines() + 1));
+		}
 	}
 }
 
-string Lexer::recurseString(char c, string s, int& incrementCurLine, bool& endFileFound) {
-	//if (inputFile->isNextChar('\'')) {
-		do {
-			if (c == EOF) {
-				endFileFound = true;
-				return s;
-			}
-			if (c == '\n') {
-				incrementCurLine++;
-			}
-			s += c;
-			c = inputFile->extract();
-		} while(c != '\'');
-		s += c;
-		if (c == '\'' && inputFile->isNextChar('\'')) {
-			c = inputFile->extract();
-			s = recurseString(c,s,incrementCurLine,endFileFound);
-		}
-	//}
-	return s;
-}
-
 void Lexer::commentMachine(char c, int& curLine) {
+	//cout << "commentMachine()";
 	string s = "";
 	int incrementCurLine = 0;
 	if (inputFile->isNextChar('|')) {
+		//cout << "multiline comment found";
+		bool undef = false;
 		s += c;
 		c = inputFile->extract();
-		while(c != '#') {
+		while(true) {
 			if (c == '\n') {
-				incrementCurLine = true;
+				incrementCurLine++;
+			}
+			/*
+			if (c == EOF) {
+				break;
+			}
+			*/
+			if (c == '|' && inputFile->isNextChar('#')) {
+				// IF CURRENT CHAR IS | AND NEXT CHAR IS #, SAVE BOTH AND BREAK
+				s += c;
+				c = inputFile->extract();
+				s += c;
+				break;
+			} else if (c == EOF) {
+				// DID NOT TERMINATE WITH STRING "|#" THEREFORE UNDEFINED
+				undef = true;
+				break;
 			}
 			s += c;
 			c = inputFile->extract();
 		}
+		if (undef) {
+			tokens.push_back(new Token(UNDEFINED, s, curLine));
+		} else {
+			tokens.push_back(new Token(COMMENT, s, curLine));
+		}
+		curLine += incrementCurLine;
+		/*
 		if (c == '#') {
 			s += c;
 			c = inputFile->extract();
+			tokens.push_back(new Token(COMMENT, s, curLine));
+			curLine += incrementCurLine;
+		} else if (c == EOF) {
+			tokens.push_back(new Token(UNDEFINED, s, curLine));
 		}
+*/
+		//cout << "done with multiline";
 	} else {
+		//cout << "single line comment found";
 		while(c != '\n') {
+			//cout << "char " << c;
 			if (c != '\r') {
 				s += c;
 			}
 			c = inputFile->extract();
+			if (c == EOF) {
+				//cout << "single line EOF found";
+				break;
+			}
 		}
-		inputFile->returnChar(c);
+		//cout << "done with single comment, creating token";
+		tokens.push_back(new Token(COMMENT, s, curLine));
+		// PUT BACK \n CHAR
+		if (c != EOF) {
+			inputFile->returnChar(c);
+		}
 	}
-	tokens.push_back(new Token(COMMENT, s, curLine));
-	curLine += incrementCurLine;
+	if (inputFile->endOfFile()) {
+		//cout << "end of file found, creating token";
+		tokens.push_back(new Token(MYEOF, "", inputFile->getMaxReadableLines() + 1));
+	}
 }
 
 string Lexer::getKeywordOrID(char c) {
 	string str = "";
-	while(isAlphabet(c)) {
+	while(isAlphabet(c) || isNumber(c)) {
 		if (c != '\n') {
 			str += c;
 		}
 		c = inputFile->extract();
+		if (c == EOF) {
+			break;
+		}
 	}
 	inputFile->returnChar(c);
 	return str;
@@ -197,6 +277,9 @@ Token* Lexer::getKeywordOrIDToken(string val, int& curLine) {
 	} else {
 		// ASSUME ID
 		return new Token(ID, val, curLine);
+	}
+	if (inputFile->endOfFile()) {
+		tokens.push_back(new Token(MYEOF, "", inputFile->getMaxReadableLines() + 1));
 	}
 	return new Token();
 }

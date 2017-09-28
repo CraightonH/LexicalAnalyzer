@@ -1,0 +1,6 @@
+#|I AM A COMMENT BLOCK|#
+#|I am a multi-line comment block withs
+stuff inside|#
+# I am a line comment
+on more than one line
+#|I will terminate prematurely

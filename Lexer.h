@@ -16,6 +16,9 @@ class Lexer {
 		// isAlphabet()
 		// determines if the input is a letter of the alphabet
 		bool isAlphabet(char c);
+		// isNumber()
+		// determines if the input is a letter of the alphabet
+		bool isNumber(char c);
 		// getKeywordOrID()
 		// finds keyword or ID in the next sequence of characters
 		string getKeywordOrID(char c);
@@ -25,9 +28,12 @@ class Lexer {
 		// stringMachine()
 		// will handle getting strings
 		void stringMachine(char c, int& curLine);
-		// recurseString()
+		// colonOrColonDashMachine()
 		// will handle getting strings
-		string recurseString(char c, string s, int& curLine, bool& endFileFound);
+		void colonOrColonDashMachine(char c, int& curLine);
+		// determineDefault()
+		// will handle getting strings
+		void determineDefault(char c, int& curLine);
 		// getKeywordOrIDToken()
 		// determines if the input is a keyword and returns token of that keyword
 		Token* getKeywordOrIDToken(string val, int& curLine);
@@ -36,6 +42,10 @@ class Lexer {
 		// Constructor/Destructor
 		// Handles creation and deletion of the Token class.
 		Lexer(char* fileName);
+		//---------------------------------------------------------------------------------------
+		// Constructor/Destructor
+		// Handles creation and deletion of the Token class.
+		//Lexer(char* fileName[]);
 		virtual ~Lexer();
 		// tokenizeFile()
 		// interacts with the Input class to read through and create tokens
